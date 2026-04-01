@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HackX | Loading...</title>
+    <style>
+        :root {
+            --anime-yellow: #ffde00;
+            --ink-black: #1a1a1a;
+            --highlight-pink: #b20000;
+            --white: #ffffff;
+        }
+
+        body, html {
+            margin: 0; padding: 0; width: 100%; height: 100%;
+            background-color: var(--anime-yellow);
+            display: flex; justify-content: center; align-items: center;
+            font-family: 'Verdana', sans-serif; overflow: hidden;
+        }
+
+        /* ROTATING MANGA BACKGROUND */
+        .bg-wrap {
+            position: absolute; width: 200vw; height: 200vh;
+            display: flex; justify-content: center; align-items: center;
+            z-index: 0; animation: rotateBG 15s linear infinite;
+        }
+
+        .speed-lines {
+            width: 100%; height: 100%;
+            background: repeating-conic-gradient(
+                from 0deg,
+                rgba(0,0,0,0.15) 0deg 1deg, 
+                transparent 1deg 15deg
+            );
+            mask-image: radial-gradient(circle, transparent 20%, black 70%);
+        }
+
+        @keyframes rotateBG {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+
+        /* THE LOADER CARD */
+        .loader-card {
+            z-index: 10; text-align: center; background: var(--white);
+            padding: 3rem; border: 6px solid var(--ink-black);
+            box-shadow: 15px 15px 0px var(--ink-black);
+            transform: rotate(-2deg);
+        }
+
+        .logo {
+            font-size: 4.5rem; font-weight: 900; color: var(--ink-black);
+            text-transform: uppercase; margin: 0; letter-spacing: -2px;
+        }
+
+        .logo span { color: var(--highlight-pink); -webkit-text-stroke: 1.5px var(--ink-black); }
+
+        .progress-wrapper {
+            margin-top: 30px; width: 300px; height: 35px;
+            background: var(--ink-black); border-radius: 50px;
+            padding: 5px; position: relative; overflow: hidden;
+        }
+
+        .progress-fill {
+            width: 0%; height: 100%;
+            background: linear-gradient(90deg, #ffd700, #ffae00);
+            border-radius: 50px;
+            animation: loadingFill 3s cubic-bezier(0.65, 0, 0.35, 1) forwards;
+        }
+
+        .status-msg {
+            margin-top: 15px; font-weight: bold; color: var(--ink-black);
+            font-size: 0.9rem; text-transform: uppercase; letter-spacing: 1px;
+        }
+
+        @keyframes loadingFill {
+            0% { width: 0%; }
+            100% { width: 100%; }
+        }
+
+        .fade-out {
+            opacity: 0;
+            transition: opacity 0.5s ease;
+            pointer-events: none;
+        }
+    </style>
+</head>
+<body id="body">
+
+    <div class="bg-wrap">
+        <div class="speed-lines"></div>
+    </div>
+
+    <div class="loader-card" id="card">
+        <h1 class="logo">Hack<span>X</span></h1>
+        <div class="progress-wrapper">
+            <div class="progress-fill"></div>
+        </div>
+        <div class="status-msg" id="status">Initializing Neural Link...</div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    <script>
+        gsap.from("#card", { scale: 0, rotate: -45, duration: 1, ease: "elastic.out(1, 0.5)" });
+
+        setTimeout(() => {
+            document.getElementById('status').innerText = "System Ready!";
+            sessionStorage.setItem('system_booted', 'true');
+
+            // Exit animation
+            gsap.to("#card", { 
+                scale: 1.5, 
+                rotate: 10, 
+                opacity: 0, 
+                duration: 0.6, 
+                ease: "power4.in",
+                onComplete: () => {
+                    window.location.href = "index.html"; 
+                }
+            });
+            gsap.to(".bg-wrap", { opacity: 0, duration: 0.5 });
+
+        }, 3000);
+    </script>
+</body>
+</html>

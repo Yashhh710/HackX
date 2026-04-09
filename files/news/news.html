@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Game Zone | HackX</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Bangers&family=Open+Sans:wght@700;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #ffde03;
+            --secondary: #03a9f4; 
+            --accent: #ff5252;
+            --black: #1a1a1a;
+            --white: #ffffff;
+            --border: 4px solid var(--black);
+            --shadow: 8px 8px 0px var(--black);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background-image: radial-gradient(var(--black) 15%, transparent 16%);
+            background-size: 20px 20px;
+            background-color: #f0f0f0;
+            font-family: 'Open Sans', sans-serif;
+            color: var(--black);
+            padding: 20px;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 50px;
+            padding: 60px 20px 40px 20px; /* Top padding increased for button space */
+            background: var(--primary);
+            border: var(--border);
+            box-shadow: var(--shadow);
+            transform: rotate(-1deg);
+            position: relative; /* Essential for positioning the button */
+        }
+
+        /* BACK BUTTON INSIDE YELLOW HEADER */
+        .header-back-btn {
+            position: absolute;
+            top: 15px;
+            left: 15px;
+            background: var(--white);
+            color: var(--black);
+            text-decoration: none;
+            font-family: 'Bangers', cursive;
+            padding: 8px 15px;
+            border: 3px solid var(--black);
+            box-shadow: 4px 4px 0px var(--black);
+            font-size: 1.1rem;
+            cursor: pointer;
+            transition: 0.1s;
+            transform: rotate(1deg); /* Counter-rotate to stay level */
+            z-index: 10;
+        }
+
+        .header-back-btn:hover {
+            background: var(--accent);
+            color: var(--white);
+            transform: scale(1.05) rotate(0deg);
+        }
+
+        .header-back-btn:active {
+            transform: translate(2px, 2px);
+            box-shadow: 0px 0px 0px var(--black);
+        }
+
+        .logo {
+            font-family: 'Bangers', cursive;
+            font-size: clamp(3rem, 10vw, 6rem);
+            text-transform: uppercase;
+            letter-spacing: 4px;
+            color: var(--white);
+            -webkit-text-stroke: 2px var(--black);
+            text-shadow: 6px 6px 0px var(--accent);
+        }
+
+        .news-container {
+            max-width: 1100px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 40px;
+        }
+
+        .news-card {
+            background: var(--white);
+            border: var(--border);
+            box-shadow: var(--shadow);
+            display: flex;
+            flex-direction: column;
+            transition: all 0.2s ease;
+        }
+
+        .news-card:hover {
+            transform: translate(-4px, -4px);
+            box-shadow: 12px 12px 0px var(--black);
+        }
+
+        .image-container {
+            height: 220px;
+            border-bottom: var(--border);
+            position: relative;
+            background: #ccc;
+            overflow: hidden;
+        }
+
+        .image-container img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .category-tag {
+            position: absolute;
+            top: -10px;
+            left: 10px;
+            background: var(--accent);
+            color: white;
+            padding: 5px 15px;
+            font-family: 'Bangers', cursive;
+            font-size: 1.2rem;
+            border: 3px solid var(--black);
+            transform: rotate(-5deg);
+            z-index: 2;
+        }
+
+        .content {
+            padding: 25px;
+        }
+
+        .date {
+            font-weight: 800;
+            font-size: 0.85rem;
+            text-transform: uppercase;
+            color: #777;
+            display: block;
+            margin-bottom: 10px;
+        }
+
+        h2 {
+            font-family: 'Bangers', cursive;
+            font-size: 2.2rem;
+            line-height: 1;
+            margin-bottom: 15px;
+            color: var(--black);
+        }
+
+        p {
+            font-weight: 600;
+            line-height: 1.5;
+            margin-bottom: 20px;
+        }
+
+        .btn {
+            display: inline-block;
+            padding: 12px 25px;
+            background: var(--secondary);
+            color: var(--white);
+            text-decoration: none;
+            font-family: 'Bangers', cursive;
+            font-size: 1.4rem;
+            border: 3px solid var(--black);
+            box-shadow: 4px 4px 0px var(--black);
+            transition: 0.1s;
+        }
+
+        .btn:active {
+            transform: translate(2px, 2px);
+            box-shadow: 2px 2px 0px var(--black);
+        }
+
+        footer {
+            text-align: center;
+            margin-top: 60px;
+            padding: 20px;
+            font-family: 'Bangers', cursive;
+            font-size: 1.5rem;
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <button class="header-back-btn" onclick="window.history.back()">← EXIT NEWS</button>
+
+        <h1 class="logo">GAMER GAZETTE</h1>
+        <p style="font-weight: 800; letter-spacing: 2px;">NEW PATCH NOTES & LEAKS INSIDE!</p>
+    </header>
+
+    <main class="news-container">
+        <article class="news-card">
+            <div class="image-container">
+                <span class="category-tag">UPDATE</span>
+                <img src="https://images.unsplash.com/photo-1542751371-adc38448a05e?q=80&w=500&auto=format&fit=crop" alt="Esports">
+            </div>
+            <div class="content">
+                <span class="date">April 9, 2026</span>
+                <h2>New Map: Neon City Drops!</h2>
+                <p>The latest Battle Royale update introduces a cyberpunk metropolis with high-speed hoverboards and vertical combat.</p>
+                <a href="#" class="btn">PATCH NOTES</a>
+            </div>
+        </article>
+
+        <article class="news-card">
+            <div class="image-container">
+                <span class="category-tag" style="background: var(--secondary);">LEAK</span>
+                <img src="https://images.unsplash.com/photo-1511512578047-dfb367046420?q=80&w=500&auto=format&fit=crop" alt="Gaming Gear">
+            </div>
+            <div class="content">
+                <span class="date">April 8, 2026</span>
+                <h2>Mythic Sniper Uncovered</h2>
+                <p>Data miners have found a "Laser-Core" sniper rifle in the files. It appears to shoot through solid walls!</p>
+                <a href="#" class="btn">VIEW LEAK</a>
+            </div>
+        </article>
+
+        <article class="news-card">
+            <div class="image-container">
+                <span class="category-tag" style="background: var(--black);">TOURNAMENT</span>
+                <img src="https://i.pinimg.com/1200x/c5/b1/c8/c5b1c89aa5e7d735039dd8feb3190016.jpg" alt="Competition">
+            </div>
+            <div class="content">
+                <span class="date">April 7, 2026</span>
+                <h2>$1M Pro Circuit Finals</h2>
+                <p>The grand finals are set for this weekend. Will the underdogs take home the golden controller trophy?</p>
+                <a href="#" class="btn">WATCH LIVE</a>
+            </div>
+        </article>
+    </main>
+
+    <footer>
+        <p>&copy; 2026 HACKX GAMING - POWERED BY PIXELS</p>
+    </footer>
+
+</body>
+</html>

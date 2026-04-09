@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HackX | Loot Store</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Bangers&family=Open+Sans:wght@700;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #ffde03;
+            --secondary: #03a9f4; 
+            --accent: #ff5252;
+            --purple: #9c27b0;
+            --green: #4caf50;
+            --black: #1a1a1a;
+            --white: #ffffff;
+            --border: 5px solid var(--black);
+            --shadow: 10px 10px 0px var(--black);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background-image: radial-gradient(var(--black) 15%, transparent 16%);
+            background-size: 20px 20px;
+            background-color: #f0f0f0;
+            font-family: 'Open Sans', sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100vh;
+            padding: 60px 20px;
+        }
+
+        .fixed-back-btn {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            background: var(--white);
+            color: var(--black);
+            font-family: 'Bangers', cursive;
+            padding: 10px 20px;
+            border: 3px solid var(--black);
+            box-shadow: 5px 5px 0px var(--black);
+            font-size: 1.2rem;
+            cursor: pointer;
+            z-index: 1000;
+            transition: 0.1s;
+        }
+
+        .fixed-back-btn:hover {
+            background: var(--accent);
+            color: white;
+            transform: translate(-2px, -2px);
+            box-shadow: 7px 7px 0px var(--black);
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 60px;
+            padding: 30px 80px;
+            background: var(--primary);
+            border: var(--border);
+            box-shadow: var(--shadow);
+            transform: rotate(-1deg);
+        }
+
+        .logo {
+            font-family: 'Bangers', cursive;
+            font-size: clamp(2.5rem, 8vw, 4.5rem);
+            text-transform: uppercase;
+            letter-spacing: 4px;
+            color: var(--white);
+            -webkit-text-stroke: 2px var(--black);
+            text-shadow: 4px 4px 0px var(--accent);
+        }
+
+        .store-grid {
+            max-width: 1200px;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 40px;
+            width: 100%;
+        }
+
+        .item-card {
+            background: var(--white);
+            border: var(--border);
+            box-shadow: var(--shadow);
+            padding: 25px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            transition: 0.2s ease-in-out;
+            position: relative;
+        }
+
+        .item-card:hover {
+            transform: translateY(-10px) rotate(1deg);
+            box-shadow: 15px 15px 0px var(--black);
+        }
+
+        .item-img {
+            width: 100%;
+            height: 250px;
+            background: #eee;
+            border: 3px solid var(--black);
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+            background-image: repeating-linear-gradient(45deg, #f9f9f9, #f9f9f9 10px, #f1f1f1 10px, #f1f1f1 20px);
+        }
+
+        .item-img img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            filter: drop-shadow(5px 5px 0px rgba(0,0,0,0.2));
+        }
+
+        .price-tag {
+            position: absolute;
+            top: -15px;
+            right: -15px;
+            background: var(--accent);
+            color: white;
+            font-family: 'Bangers', cursive;
+            padding: 8px 15px;
+            border: 3px solid var(--black);
+            font-size: 1.8rem;
+            transform: rotate(10deg);
+            z-index: 10;
+        }
+
+        .item-name {
+            font-family: 'Bangers', cursive;
+            font-size: 2.5rem;
+            color: var(--black);
+            margin-bottom: 10px;
+            text-align: center;
+            text-transform: uppercase;
+        }
+
+        .item-desc {
+            font-weight: 800;
+            font-size: 1.1rem;
+            color: #333;
+            text-align: center;
+            margin-bottom: 25px;
+            min-height: 50px;
+            line-height: 1.2;
+        }
+
+        .buy-btn {
+            width: 100%;
+            padding: 15px;
+            background: var(--secondary);
+            color: white;
+            font-family: 'Bangers', cursive;
+            font-size: 1.8rem;
+            border: 3px solid var(--black);
+            box-shadow: 5px 5px 0px var(--black);
+            cursor: pointer;
+            transition: 0.1s;
+        }
+
+        .buy-btn:hover {
+            filter: brightness(1.1);
+        }
+
+        .buy-btn:active {
+            transform: translate(2px, 2px);
+            box-shadow: 0px 0px 0px var(--black);
+        }
+
+        @media (max-width: 600px) {
+            .fixed-back-btn { top: 10px; left: 10px; padding: 5px 10px; }
+            header { padding: 20px 40px; margin-top: 40px; }
+            .logo { font-size: 2.2rem; }
+        }
+    </style>
+</head>
+<body>
+
+    <button class="fixed-back-btn" onclick="window.history.back()">← EXIT STORE</button>
+
+    <header>
+        <h1 class="logo">LOOT STORE</h1>
+        <p style="font-weight: 800; letter-spacing: 2px;">GEAR UP FOR THE GAME!</p>
+    </header>
+
+    <main class="store-grid">
+        <article class="item-card">
+            <div class="price-tag">$49</div>
+            <div class="item-img">
+                <img src="https://i.pinimg.com/736x/a5/99/c8/a599c8bf891ab2ad6f6af2cf28b57a64.jpg" alt="Phantom Mask">
+            </div>
+            <h2 class="item-name">Phantom Mask</h2>
+            <p class="item-desc">Legendary headgear for stealth missions.<br>+10 Coolness points.</p>
+            <button class="buy-btn">GRAB IT!</button>
+        </article>
+
+        <article class="item-card">
+            <div class="price-tag" style="background: var(--secondary);">$25</div>
+            <div class="item-img">
+                <img src="https://i.pinimg.com/1200x/35/35/34/353534250f93908f6a2e37f81a793d75.jpg" alt="Nitro Juice">
+            </div>
+            <h2 class="item-name">Nitro Juice</h2>
+            <p class="item-desc">Infinite stamina for 10 minutes.<br>Warning: Very Fizzy.</p>
+            <button class="buy-btn" style="background: var(--green);">DRINK UP!</button>
+        </article>
+
+        <article class="item-card">
+            <div class="price-tag" style="background: var(--accent);">$150</div>
+            <div class="item-img">
+                <img src="https://i.pinimg.com/736x/9e/88/10/9e8810e257b721b8c7b186fa7f385689.jpg" alt="Katana">
+            </div>
+            <h2 class="item-name">Neon Katana</h2>
+            <p class="item-desc">Slices through firewalls and enemies.<br>100% Digital Steel.</p>
+            <button class="buy-btn" style="background: var(--black); color: var(--primary);">WIELD IT!</button>
+        </article>
+
+        <article class="item-card">
+            <div class="price-tag" style="background: var(--purple);">$120</div>
+            <div class="item-img">
+                <img src="https://i.pinimg.com/736x/64/b0/8f/64b08fd09e4e7e4d8b0991a10f8305e0.jpg" alt="Cyber Drive">
+            </div>
+            <h2 class="item-name">Cyber Drive</h2>
+            <p class="item-desc">Unlocks secret levels and skins.<br>Hack the planet!</p>
+            <button class="buy-btn" style="background: var(--accent);">UPGRADE!</button>
+        </article>
+
+        <article class="item-card">
+            <div class="price-tag" style="background: var(--green);">$250</div>
+            <div class="item-img">
+                <img src="https://i.pinimg.com/736x/55/11/c8/5511c83ef93db05fe585e9b2f614747d.jpg" alt="Jetpack">
+            </div>
+            <h2 class="item-name">Grav-Pack</h2>
+            <p class="item-desc">Fly over obstacles and traps.<br>Fuel not included.</p>
+            <button class="buy-btn" style="background: var(--secondary);">FLY HIGH!</button>
+        </article>
+
+        <article class="item-card">
+            <div class="price-tag" style="background: #ff9800;">$35</div>
+            <div class="item-img">
+                <img src="https://i.pinimg.com/736x/e6/95/88/e69588cea343ad7033d13f1bf282ed9d.jpg" alt="Glasses">
+            </div>
+            <h2 class="item-name">Code-Vision</h2>
+            <p class="item-desc">See hidden traps through walls.<br>Stylish and functional.</p>
+            <button class="buy-btn" style="background: var(--purple);">EQUIP!</button>
+        </article>
+    </main>
+
+</body>
+</html>

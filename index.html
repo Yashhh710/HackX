@@ -1,0 +1,560 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HACKX | Yash Tambade</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@900&family=Orbitron:wght@400;700&display=swap');
+
+        :root {
+            --manga-black: #111;
+            --manga-white: #fff;
+            --manga-cyan: #06b6d4;
+            --white: #ffffff;
+        }
+
+        body, html { 
+            margin: 0; padding: 0; height: 100%; overflow: hidden; 
+            font-family: 'Inter', ui-sans-serif, system-ui, sans-serif;
+        }
+
+        /* --- HUD ALIGNMENT SYSTEM --- */
+        .hud-width {
+            width: 280px; /* Locked shared width for both bars */
+        }
+
+        .manga-panel {
+            background: var(--manga-black);
+            border: 3px solid #000;
+            box-shadow: 6px 6px 0px rgba(0,0,0,0.2);
+            clip-path: polygon(0% 0%, 95% 0%, 100% 50%, 95% 100%, 0% 100%);
+        }
+
+        .manga-avatar {
+            border: 3px solid #000;
+            background: #fff;
+            box-shadow: 4px 4px 0px rgba(0,0,0,0.2);
+        }
+
+        .level-square {
+            width: 52px;
+            height: 52px;
+            background: var(--panel-purple);
+            border: 2px solid rgba(255, 255, 255, 0.1);
+            border-radius: 4px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+            box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.4);
+        }
+
+        .manga-xp {
+            background: #333;
+            height: 24px;
+            border-left: 3px solid #000;
+            border-right: 3px solid #000;
+            position: relative;
+        }
+
+        #progress-fill {
+            height: 100%;
+            background: var(--manga-cyan);
+            border-right: 3px solid #000;
+            transition: width 1.5s cubic-bezier(0.19, 1, 0.22, 1);
+        }
+
+        @keyframes moveGradient {
+            0% { background-position: 200% 0; }
+            100% { background-position: -200% 0; }
+        }
+
+        /* --- TRANSITION --- */
+        #main-bg { 
+            position: fixed; 
+            top: 0; 
+            left: 0; 
+            width: 100%; 
+            height: 100%; 
+            background-image: url('../models/img/1.jpeg'); 
+            background-size: cover; 
+            background-position: center; 
+            z-index: -1; 
+            transform: scale(1.15);
+            animation: bgZoom 30s infinite alternate ease-in-out;
+        }
+        @keyframes bgZoom {
+            from { transform: scale(1.15); }
+            to { transform: scale(1.25); }
+        }
+        .clickable-ui { opacity: 0; transform: translateY(-30px); filter: blur(10px); }
+    </style>
+</head>
+<body class="text-white">
+
+    <div id="transition-overlay">
+        <svg class="liquid-layer" viewBox="0 0 100 100" preserveAspectRatio="none">
+            <!-- Set wave to FULL by default so it can "reveal" downwards when the page loads -->
+            <path id="wave-layer-3" d="M 0 100 V 0 Q 50 0 100 0 V 100 z" fill="#083344" opacity="0.2" />
+            <path id="wave-layer-2" d="M 0 100 V 0 Q 50 0 100 0 V 100 z" fill="#0e7490" opacity="0.5" />
+            <path id="wave-layer-1" d="M 0 100 V 0 Q 50 0 100 0 V 100 z" fill="#06b6d4" />
+        </svg>
+    </div>
+
+    <!-- CREATIVE TRANSITION BRANDING - ENHANCED & BIGGER -->
+    <div id="transition-branding" class="fixed inset-0 flex flex-col items-center justify-center opacity-0 z-[10010] pointer-events-none">
+        <div class="relative mb-8 scale-150">
+            <!-- Massive Glow (Image removed per request) -->
+            <div class="absolute inset-0 bg-yellow-400 blur-[60px] rounded-full opacity-40 animate-pulse scale-150"></div>
+        </div>
+        <h2 class="text-6xl font-black text-black tracking-[0.5em] uppercase font-[Orbitron] translate-y-20 filter drop-shadow-[0_4px_10px_rgba(0,0,0,0.3)]" id="transition-text">
+            YASH TAMBADE
+        </h2>
+    </div>
+
+    <!-- LOADER HAS BEEN MOVED TO Loading.html -->
+
+    <div id="bg-container" class="fixed inset-0 z-[-1]">
+        <div id="main-bg"></div>
+    </div>
+
+    <!-- CENTRAL CHARACTER / MIDDLE IMAGE -->
+    <div class="fixed inset-0 flex items-end justify-center pb-6 pointer-events-none z-10">
+        <div id="character-container" class="clickable-ui relative group perspective-1000">
+            <!-- Background Glow -->
+            <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[700px] h-[700px] bg-yellow-400/10 blur-[130px] rounded-full group-hover:bg-yellow-400/20 transition-all duration-1000"></div>
+            
+            <!-- Character Image -->
+            <img id="center-character" src="../models/img/me.png" 
+                 class="relative max-h-[85vh] w-auto object-contain drop-shadow-[0_20px_50px_rgba(0,0,0,0.5)] 
+                        group-hover:scale-105 group-hover:-translate-y-4 transition-all duration-1000 ease-out translate-y-[50px]" 
+                 alt="Main Character">
+            
+            <!-- Reflection/Highlight Overlay -->
+            <div class="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-1000"></div>
+        </div>
+    </div>
+
+    <a href="../aboutme/about.html" class="nav-link clickable-ui fixed top-8 left-8 z-50 flex items-start select-none group transition-all duration-300 hover:scale-[1.03] active:scale-95">
+        
+        <!-- Manga Avatar Section -->
+        <div class="relative">
+            <div class="manga-avatar w-20 h-20 overflow-hidden group-hover:shadow-[0_0_20px_rgba(255,255,255,0.3)] transition-all">
+                <img src="https://avatars.githubusercontent.com/u/233944797?v=4" class="w-full h-full object-cover">
+            </div>
+            <!-- Overlapping Level Badge -->
+            <div class="absolute -bottom-2 -left-2 bg-white border-[3px] border-black px-2 py-0 shadow-[4px_4px_0_rgba(0,0,0,0.5)] transform -rotate-3 z-20 group-hover:scale-110 transition-transform">
+                <span class="text-black font-black text-xl italic tracking-tighter">Lv.<span id="display-age-years-manga">0</span></span>
+            </div>
+        </div>
+
+        <!-- Manga Info Section -->
+        <div class="flex flex-col -ml-1 mt-2">
+            <!-- Name Bar -->
+            <div class="manga-panel px-8 py-1 pr-12 group-hover:bg-zinc-800 transition-colors">
+                <span class="text-white font-black italic text-xl tracking-widest uppercase">YASH TAMBADE</span>
+            </div>
+            
+            <!-- Progress Section -->
+            <div class="flex flex-col -mt-1 ml-4 relative">
+                <div class="manga-xp w-64 shadow-[4px_4px_0_rgba(0,0,0,0.2)] group-hover:shadow-[4px_4px_0_var(--manga-cyan)] transition-all">
+                    <div id="progress-fill"></div>
+                    <!-- Percentage Text Overlaid -->
+                    <span class="absolute inset-0 flex items-center justify-center text-white font-black italic text-[10px] tracking-widest drop-shadow-[2px_2px_0_rgba(0,0,0,1)]">
+                        <span id="level-percentage">0</span>%
+                    </span>
+                </div>
+            </div>
+        </div>
+    </a>
+
+    <!-- BRAWL STYLE SIDE BUTTONS -->
+    <div class="fixed left-8 top-1/2 -translate-y-1/2 z-40 flex flex-col gap-6">
+        
+        <!-- Button 1: STORE -->
+<button id="storeBtn" class="clickable-ui relative group select-none outline-none">
+    <div id="storeInner" class="relative w-24 h-14 bg-gradient-to-b from-[#3b4b66] to-[#1f2c42] border-[2.5px] border-[#0a0a0a] rounded-xl flex flex-col items-center justify-end pb-1.5 shadow-[0_5px_0_#0a0a0a] transition-all duration-150">
+        <div class="absolute inset-0 rounded-[9px] shadow-[inset_0_2px_0_rgba(255,255,255,0.15)] pointer-events-none"></div>
+        <div class="absolute -top-7 w-12 h-12 transition-transform duration-[250ms] ease-out group-hover:scale-110 drop-shadow-[0_3px_2px_rgba(0,0,0,0.6)] flex justify-center">
+            <span class="text-[40px] leading-none block filter saturate-110 pointer-events-none">🏪</span>
+        </div>
+        <span class="relative z-10 text-[#f8fafc] font-black text-[11px] uppercase tracking-wide font-[Orbitron] drop-shadow-[0_1.5px_0_#000]">STORE</span>
+    </div>
+</button>
+
+        <!-- Button 2: mini games -->
+<button id="miniBtn" class="clickable-ui relative group select-none outline-none mt-2">
+    <div id="btnInner" class="relative w-24 h-14 bg-gradient-to-b from-[#3b4b66] to-[#1f2c42] border-[2.5px] border-[#0a0a0a] rounded-xl flex flex-col items-center justify-end pb-1.5 shadow-[0_5px_0_#0a0a0a] transition-all duration-150">
+        
+        <!-- Inner Highlight -->
+        <div class="absolute inset-0 rounded-[9px] shadow-[inset_0_2px_0_rgba(255,255,255,0.15)] pointer-events-none"></div>
+        
+        <!-- Icon Array -->
+        <div class="absolute -top-7 w-14 h-12 transition-transform duration-[250ms] ease-out group-hover:scale-110 drop-shadow-[0_3px_2px_rgba(0,0,0,0.6)] flex items-center justify-center -space-x-5 pointer-events-none">
+            <span class="text-[32px] block transform -rotate-12 z-10">🃏</span>
+            <span class="text-[32px] block transform z-0 brightness-75 translate-y-1">🎴</span>
+            <span class="text-[32px] block transform rotate-12 z-0 brightness-50 translate-y-2">🃏</span>
+        </div>
+        
+        <!-- Badge -->
+        <div class="absolute -top-3 -right-3 bg-[#22c55e] border-[2.5px] border-[#0a0a0a] rounded-full text-white font-black text-[12px] min-w-[26px] h-[26px] px-1 flex items-center justify-center shadow-[0_2px_0_#0a0a0a] z-20">1</div>
+        
+        <!-- Text -->
+        <span class="relative z-10 text-[#f8fafc] font-black text-[10px] uppercase tracking-wide font-[Orbitron] drop-shadow-[0_1.5px_0_#000]">
+            Mini games
+        </span>
+    </div>
+</button>
+
+        <!-- Button 3: valyt -->
+<button id="vaultBtn" class="clickable-ui relative group select-none outline-none mt-2">
+    <div id="vaultInner" class="relative w-24 h-14 bg-gradient-to-b from-[#3b4b66] to-[#1f2c42] border-[2.5px] border-[#0a0a0a] rounded-xl flex flex-col items-center justify-end pb-1.5 shadow-[0_5px_0_#0a0a0a] transition-all duration-150">
+        <div class="absolute inset-0 rounded-[9px] shadow-[inset_0_2px_0_rgba(255,255,255,0.15)] pointer-events-none"></div>
+        <div class="absolute -top-6 w-12 h-12 transition-transform duration-[250ms] ease-out group-hover:scale-110 drop-shadow-[0_3px_2px_rgba(0,0,0,0.6)] flex justify-center">
+            <span class="text-[38px] leading-none block pointer-events-none filter hue-rotate-15">👤</span>
+        </div>
+        <span class="relative z-10 text-[#f8fafc] font-black text-[11px] uppercase tracking-wide font-[Orbitron] drop-shadow-[0_1.5px_0_#000]">Vault</span>
+    </div>
+</button>
+
+        <!-- Button 4: NEWS -->
+        <button onclick="triggerLiquidWave('../files/news/news.html')" class="clickable-ui relative group select-none outline-none mt-2">
+            <div class="relative w-24 h-14 bg-gradient-to-b from-[#3b4b66] to-[#1f2c42] border-[2.5px] border-[#0a0a0a] rounded-xl flex flex-col items-center justify-end pb-1.5 shadow-[0_5px_0_#0a0a0a] group-active:shadow-[0_0px_0_#0a0a0a] group-active:translate-y-[5px] transition-all duration-75">
+                <!-- Inner Highlight -->
+                <div class="absolute inset-0 rounded-[9px] shadow-[inset_0_2px_0_rgba(255,255,255,0.15)] pointer-events-none"></div>
+                <!-- Icon -->
+                <div class="absolute -top-7 w-12 h-12 transition-transform duration-[250ms] ease-out group-hover:scale-110 drop-shadow-[0_3px_2px_rgba(0,0,0,0.6)] flex justify-center">
+                    <span class="text-[40px] leading-none block pointer-events-none">📰</span>
+                </div>
+                
+                <!-- Badge -->
+                <div class="absolute -top-3 -right-3 bg-[#22c55e] border-[2.5px] border-[#0a0a0a] rounded-full text-white font-black text-[12px] min-w-[26px] h-[26px] px-1 flex items-center justify-center shadow-[0_2px_0_#0a0a0a] z-20 transition-transform duration-75 group-active:-translate-y-[5px]">2</div>
+                
+                <!-- Text -->
+                <span class="relative z-10 text-[#f8fafc] font-black text-[11px] uppercase tracking-wide font-[Orbitron] drop-shadow-[0_1.5px_0_#000]">NEWS</span>
+            </div>
+        </button>
+    </div>
+
+
+    <button id="settingsBtn" class="fixed top-6 right-6 z-50 p-2.5 bg-black/60 backdrop-blur-xl border border-white/20 rounded-full hover:bg-white/20 hover:scale-110 active:scale-95 transition-all duration-300">
+        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5"><path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z"/><circle cx="12" cy="12" r="3"/></svg>
+    </button>
+
+    <div id="sideMenu" class="fixed top-0 right-0 h-full w-80 bg-zinc-950/95 backdrop-blur-2xl border-l border-white/10 z-40 translate-x-full p-8 flex flex-col">
+        <h2 class="text-2xl font-black mb-10 text-yellow-500 font-[Orbitron]">SYSTEM SETTINGS</h2>
+        <div class="mb-8">
+            <h3 class="text-[10px] text-zinc-500 font-bold uppercase tracking-widest mb-3">Birth Registry</h3>
+            <input type="date" id="birthdate-input" value="2008-05-19" class="w-full bg-white/5 border border-white/10 rounded-xl p-3 text-white focus:outline-none focus:border-yellow-500 transition-all">
+        </div>
+    </div>
+
+    <!-- EPIC MANGA PLAY BUTTON (BOTTOM RIGHT) -->
+    <button onclick="triggerLiquidWave('../play/play.html')" class="clickable-ui fixed bottom-10 right-10 z-50 group hover:-translate-y-1 hover:-translate-x-1 active:translate-y-1 active:translate-x-1 transition-all duration-300 select-none">
+        
+        <!-- Dense Manga Shadow (Deep Black & Cyan Stripes) -->
+        <div class="absolute inset-0 bg-black translate-x-2 translate-y-2 group-hover:translate-x-3 group-hover:translate-y-3 transition-transform duration-300 border-2 border-black shadow-[2px_2px_0_rgba(0,0,0,0.5)]" style="background: repeating-linear-gradient(-45deg, #000, #000 4px, #06b6d4 4px, #06b6d4 8px);"></div>
+
+        <!-- Main Body -->
+        <div class="relative border-[3px] border-black bg-white px-6 py-2 flex items-center justify-center overflow-hidden transition-colors duration-300 group-hover:bg-black shadow-[inset_0_2px_0_rgba(255,255,255,0.7)]">
+            
+            <!-- Anime Strike Background (Slices in) -->
+            <div class="absolute inset-0 bg-[#06b6d4] transform -translate-x-[120%] skew-x-[-25deg] scale-[1.5] group-hover:translate-x-0 transition-transform duration-500 ease-[cubic-bezier(0.19,1,0.22,1)] z-0"></div>
+            <div class="absolute inset-0 bg-yellow-400 transform -translate-x-[120%] skew-x-[-25deg] scale-[1.5] group-hover:translate-x-[20%] transition-transform duration-[600ms] ease-[cubic-bezier(0.19,1,0.22,1)] z-0"></div>
+            
+            <!-- Core Text -->
+            <div class="relative z-10 flex items-center gap-2 pr-1">
+                <span class="text-[22px] font-black text-black tracking-[4px] italic font-[Orbitron] group-hover:text-black transition-colors duration-300 group-hover:-skew-x-[10deg] mt-[2px]">
+                    PLAY
+                </span>
+                <!-- Play Icon -->
+                <svg viewBox="0 0 24 24" class="w-6 h-6 fill-black group-hover:fill-white transition-all duration-300 filter drop-shadow-[2px_2px_0_#06b6d4] group-hover:delay-100 group-hover:drop-shadow-[2px_2px_0_#000]">
+                    <path d="M4 2.69127C4 1.93067 4.81547 1.44851 5.48192 1.81506L22.4069 11.1238C23.0977 11.5037 23.0977 12.4963 22.4069 12.8762L5.48192 22.1849C4.81546 22.5515 4 22.0693 4 21.3087V2.69127Z" />
+                </svg>
+            </div>
+        </div>
+        
+        <!-- Corner Tag -->
+        <div class="absolute -top-3 -right-3 bg-yellow-400 border-2 border-black px-2 py-0.5 transform rotate-12 group-hover:rotate-[20deg] group-hover:scale-110 transition-transform duration-300 z-20 shadow-[2px_2px_0_#000]">
+            <span class="text-[9px] font-black text-black uppercase tracking-widest italic leading-none block mt-[2px]">Enter</span>
+        </div>
+    </button>
+
+    <!-- BRAWL STYLE CHEST BUTTONS (BOTTOM LEFT CORNER) -->
+    <div class="fixed bottom-8 left-8 z-40 flex items-end gap-6 scale-90 origin-bottom-left">
+        
+        <!-- Chest 1: Box -->
+        <button class="clickable-ui relative group select-none outline-none hover:scale-105 transition-transform duration-300">
+            <div class="relative w-40 h-[100px] bg-[#1f2937] border-[3px] border-[#0a0a0a] rounded-xl flex flex-col justify-end shadow-[0_6px_0_#0a0a0a] group-active:shadow-[0_0px_0_#0a0a0a] group-active:translate-y-[6px] transition-all duration-75 overflow-hidden">
+                <!-- Inner Highlight -->
+                <div class="absolute inset-0 shadow-[inset_0_3px_0_rgba(255,255,255,0.2)] pointer-events-none z-10"></div>
+                
+                <!-- Chest Gradient Emulation -->
+                <div class="absolute inset-0 bg-gradient-to-b from-[#e2e8f0] to-[#c084fc] flex items-center justify-center overflow-hidden mb-7 pointer-events-none">
+                    <span class="text-[60px] drop-shadow-md">💼</span>
+                    <!-- Flash Overlay -->
+                    <div class="absolute top-1 left-2 w-10 h-6 bg-white rounded-full opacity-60 transform -rotate-12"></div>
+                </div>
+
+                <!-- Progress Bar -->
+                <div class="h-8 w-full bg-[#1e293b] border-t-[3px] border-[#0a0a0a] flex items-center relative overflow-hidden pointer-events-none">
+                    <div class="absolute inset-0 bg-[#0ea5e9] w-[70%]"></div>
+                    <!-- Icon -->
+                    <div class="absolute left-[-4px] bg-white border-[2.5px] border-[#0a0a0a] w-9 h-9 rounded-full flex items-center justify-center shadow-[0_2px_0_#0a0a0a]">
+                        <span class="text-[14px]">🌟</span>
+                    </div>
+                    <span class="relative z-10 text-white font-black text-[13px] w-full text-center drop-shadow-[0_1.5px_0_#000] pl-6 font-[Orbitron] translate-y-[1px]">7/10</span>
+                </div>
+            </div>
+        </button>
+
+        <!-- Chest 2: Big Box -->
+        <button class="clickable-ui relative group select-none outline-none hover:scale-105 transition-transform duration-300">
+            <div class="relative w-40 h-[100px] bg-[#ca8a04] border-[3px] border-[#0a0a0a] rounded-xl flex flex-col justify-end shadow-[0_6px_0_#0a0a0a] group-active:shadow-[0_0px_0_#0a0a0a] group-active:translate-y-[6px] transition-all duration-75 overflow-hidden">
+                
+                <!-- Badge -->
+                <div class="absolute -top-3 -right-3 bg-[#ef4444] border-[3px] border-[#0a0a0a] rounded-full text-white font-black text-[16px] min-w-[32px] h-[32px] flex items-center justify-center shadow-[0_2px_0_#0a0a0a] z-20 transition-transform duration-75 group-active:-translate-y-[6px] leading-none pb-[2px]">1</div>
+
+                <!-- Chest Gradient Emulation -->
+                <div class="absolute inset-0 bg-gradient-to-b from-[#bae6fd] to-[#3b82f6] flex items-center justify-center overflow-hidden mb-7 pointer-events-none">
+                    <span class="text-[60px] drop-shadow-md">🧰</span>
+                    <!-- Flash Overlay -->
+                    <div class="absolute top-1 left-2 w-10 h-6 bg-white rounded-full opacity-60 transform -rotate-12"></div>
+                </div>
+
+                <!-- Progress Bar -->
+                <div class="h-8 w-full bg-[#b45309] border-t-[3px] border-[#0a0a0a] flex items-center relative overflow-hidden pointer-events-none">
+                    <div class="absolute inset-0 bg-[#f59e0b] w-[18%]"></div>
+                    <!-- Icon -->
+                    <div class="absolute left-[-4px] bg-white border-[2.5px] border-[#0a0a0a] w-9 h-9 flex items-center justify-center shadow-[0_2px_0_#0a0a0a]" style="clip-path: polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%);">
+                        <span class="text-[14px]">💀</span>
+                    </div>
+                    <span class="relative z-10 text-white font-black text-[13px] w-full text-center drop-shadow-[0_1.5px_0_#000] pl-6 font-[Orbitron] translate-y-[1px]">18/100</span>
+                </div>
+            </div>
+        </button>
+
+    </div>
+
+
+    <script>
+        const loaderOverlay = document.getElementById('loader-overlay');
+        const loaderFill = document.getElementById('loader-fill');
+        const loaderCard = document.getElementById('card');
+        const birthInput = document.getElementById('birthdate-input');
+        const layer1 = document.getElementById('wave-layer-1');
+        const layer2 = document.getElementById('wave-layer-2');
+        const layer3 = document.getElementById('wave-layer-3');
+
+        function updateAge() {
+            const birthDate = new Date(birthInput.value);
+            const now = new Date();
+            const diffTime = Math.abs(now - birthDate);
+            const totalDays = Math.floor(diffTime / (1000 * 60 * 60 * 24));
+            let currentAge = now.getFullYear() - birthDate.getFullYear();
+            let lastBirthday = new Date(now.getFullYear(), birthDate.getMonth(), birthDate.getDate());
+            if (now < lastBirthday) {
+                currentAge--;
+                lastBirthday = new Date(now.getFullYear() - 1, birthDate.getMonth(), birthDate.getDate());
+            }
+            let nextBirthday = new Date(lastBirthday.getFullYear() + 1, birthDate.getMonth(), birthDate.getDate());
+            const totalYearMs = nextBirthday - lastBirthday;
+            const elapsedMs = now - lastBirthday;
+            const progressPercent = Math.min((elapsedMs / totalYearMs) * 100, 100);
+            if (document.getElementById('display-age-years-manga')) document.getElementById('display-age-years-manga').innerText = currentAge;
+            if (document.getElementById('level-percentage')) document.getElementById('level-percentage').innerText = Math.floor(progressPercent);
+            if (document.getElementById('xp-text')) document.getElementById('xp-text').innerText = `${totalDays.toLocaleString()} DAYS EVOLVED`;
+            document.getElementById('progress-fill').style.width = progressPercent + "%";
+        }
+
+        function triggerLiquidWave(targetUrl) {
+            const tl = gsap.timeline();
+            const branding = document.getElementById('transition-branding');
+            const text = document.getElementById('transition-text');
+            const centerCharacter = document.getElementById('center-character');
+            const characterContainer = document.getElementById('character-container');
+            
+            // Elevate character so it's ON TOP of the liquid wave
+            if (characterContainer) {
+                characterContainer.style.zIndex = '10005';
+            }
+            
+            // Smooth transformation to 2.png
+            if (centerCharacter) {
+                gsap.to(centerCharacter, {
+                    opacity: 0,
+                    scale: 0.8,
+                    filter: "blur(10px) brightness(2)",
+                    duration: 0.2,
+                    onComplete: () => {
+                        centerCharacter.src = '../models/img/2.png';
+                        gsap.to(centerCharacter, {
+                            opacity: 1,
+                            scale: 1.15,
+                            filter: "blur(0px) brightness(1)",
+                            duration: 0.5,
+                            ease: "expo.out"
+                        });
+                    }
+                });
+            }
+            
+            // RESET
+            tl.set([layer1, layer2, layer3], { attr: { d: "M 0 100 V 100 Q 50 100 100 100 V 100 z" } });
+            tl.set(branding, { opacity: 0, scale: 0.5, filter: "blur(20px)" });
+            tl.set(text, { y: 100, opacity: 0 });
+            
+            // WAVE UP (More dramatic organic curves)
+            tl.to(layer3, { duration: 0.8, attr: { d: "M 0 100 V 20 Q 50 -40 100 20 V 100 z" }, ease: "power3.in" }, 0);
+            tl.to(layer2, { duration: 0.9, attr: { d: "M 0 100 V 30 Q 50 -30 100 30 V 100 z" }, ease: "power3.inOut" }, 0.05);
+            tl.to(layer1, { duration: 1, attr: { d: "M 0 100 V 40 Q 50 -20 100 40 V 100 z" }, ease: "power3.inOut" }, 0.1);
+            
+            // DRAMATIC BRANDING REVEAL
+            tl.to(branding, { opacity: 1, scale: 1, filter: "blur(0px)", duration: 0.8, ease: "back.out(1.2)" }, 0.4);
+            tl.to(text, { y: 0, opacity: 1, duration: 0.7, ease: "expo.out" }, 0.6);
+
+            // MASSIVE FILL FINISH
+            tl.to([layer1, layer2, layer3], { 
+                duration: 0.8, 
+                attr: { d: "M 0 100 V 0 Q 50 0 100 0 V 100 z" }, 
+                ease: "expo.in", 
+                stagger: 0.08,
+                onComplete: () => { window.location.href = targetUrl; } 
+            }, "+=0.2");
+
+            // IMPACTFUL EXIT
+            tl.to(branding, { scale: 1.5, opacity: 0, duration: 0.6, ease: "power3.in" }, "-=0.4");
+        }
+
+        document.querySelectorAll('.nav-link').forEach(link => {
+            link.addEventListener('click', (e) => {
+                e.preventDefault();
+                triggerLiquidWave(link.getAttribute('href'));
+            });
+        });
+
+        // --- BOOT REDIRECT (FIXED FOR NAVIGATION) ---
+        // Only trigger loader if it's a hard refresh
+        const navEntries = window.performance.getEntriesByType("navigation");
+        if (navEntries.length > 0 && navEntries[0].type === "reload") {
+            sessionStorage.removeItem('system_booted');
+        }
+
+        if (!sessionStorage.getItem('system_booted')) {
+            window.location.href = 'Loading.html';
+        }
+
+        window.addEventListener('DOMContentLoaded', () => {
+            updateAge();
+            const layer1 = document.getElementById('wave-layer-1');
+            const layer2 = document.getElementById('wave-layer-2');
+            const layer3 = document.getElementById('wave-layer-3');
+            
+            const tl = gsap.timeline();
+            
+            // REVEAL WAVE DOWNWARDS (When arriving from loading or about page)
+            tl.to(layer1, { duration: 0.8, attr: { d: "M 0 100 V 100 Q 50 100 100 100 V 100 z" }, ease: "power3.inOut" }, 0.1);
+            tl.to(layer2, { duration: 0.9, attr: { d: "M 0 100 V 100 Q 50 100 100 100 V 100 z" }, ease: "power3.inOut" }, 0.2);
+            tl.to(layer3, { duration: 1, attr: { d: "M 0 100 V 100 Q 50 100 100 100 V 100 z" }, ease: "power3.inOut" }, 0.3);
+
+            // Animate UI elements in
+            tl.to(".clickable-ui", { opacity: 1, y: 0, filter: "blur(0px)", stagger: 0.1, duration: 1, ease: "expo.out" }, 0.5);
+        });
+
+        // --- MOUSE PARALLAX ANIMATION ---
+        window.addEventListener('mousemove', (e) => {
+            const { clientX, clientY } = e;
+            const xPos = (clientX / window.innerWidth - 0.5) * 8; // Small shift
+            const yPos = (clientY / window.innerHeight - 0.5) * 4;  // Very small shift
+            const rotY = (clientX / window.innerWidth - 0.5) * 3;   // Subtle tilt
+            const rotX = (clientY / window.innerHeight - 0.5) * -2; // Subtle tilt
+
+            gsap.to("#character-container", {
+                duration: 3.5, // Ultra slow and smooth
+                x: xPos,
+                y: yPos,
+                rotationY: rotY,
+                rotationX: rotX,
+                ease: "power1.out",
+                overwrite: "auto"
+            });
+
+            // --- Background Parallax (Moves in strong opposite direction) ---
+            gsap.to("#bg-container", {
+                duration: 4.5, // Ultra slow for background
+                x: -xPos * 1.5, 
+                y: -yPos * 1.5,
+                ease: "power2.out",
+                overwrite: "auto"
+            });
+        });
+
+        birthInput.addEventListener('change', updateAge);
+        setInterval(updateAge, 60000);
+
+        const btn = document.getElementById('settingsBtn');
+        const menu = document.getElementById('sideMenu');
+        let menuOpen = false;
+        btn.onclick = () => {
+            gsap.to(menu, { x: menuOpen ? "100%" : 0, duration: 0.6, ease: "expo.out" });
+            gsap.to(btn, { rotation: menuOpen ? 0 : 180, duration: 0.6 });
+            menuOpen = !menuOpen;
+        };
+
+        // mini game
+const miniBtn = document.getElementById("miniBtn");
+const miniInner = document.getElementById("btnInner");
+
+miniBtn.addEventListener("click", () => {
+    // press animation
+    miniInner.style.transform = "translateY(5px)";
+    miniInner.style.boxShadow = "0 0 0 #0a0a0a";
+
+    // small delay for effect
+    setTimeout(() => {
+        window.location.href = "../files/minigames/mini.html";
+    }, 300);
+});
+
+// --- Vault Button Logic (Same Tab) ---
+const vaultBtn = document.getElementById("vaultBtn");
+const vaultInner = document.getElementById("vaultInner");
+
+vaultBtn.addEventListener("click", () => {
+    // 1. Play the 'Press' animation (Down)
+    vaultInner.style.transform = "translateY(5px)";
+    vaultInner.style.boxShadow = "0 0 0 #0a0a0a";
+
+    // 2. Small delay to let the user feel the click
+    setTimeout(() => {
+        // 3. Navigate in the same tab
+        window.location.href = '../files/Vault/Vault.html';
+        
+        // Optional: Reset position after 300ms so it's ready if they come back
+        setTimeout(() => {
+            vaultInner.style.transform = "translateY(0px)";
+            vaultInner.style.boxShadow = "0 5px 0 #0a0a0a";
+        }, 300);
+    }, 150);
+});
+
+// --- Store Button Logic ---
+const storeBtn = document.getElementById("storeBtn");
+const storeInner = document.getElementById("storeInner");
+
+storeBtn.addEventListener("click", () => {
+    // 1. Play the 'Press' animation
+    storeInner.style.transform = "translateY(5px)";
+    storeInner.style.boxShadow = "0 0 0 #0a0a0a";
+
+    // 2. Trigger your liquid wave transition to the store file
+    // Adjusted path to match your folder structure (assuming it's in files/store/)
+    triggerLiquidWave('../files/store/store.html');
+});
+
+    </script>
+</body>
+</html>

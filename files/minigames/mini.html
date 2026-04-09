@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HackX | Menu</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Bangers&family=Open+Sans:wght@700;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #ffde03;
+            --secondary: #03a9f4; 
+            --accent: #ff5252;
+            --green: #22b38a;
+            --lime: #76bc21;
+            --orange: #f9a41c;
+            --blue: #4a8dfd;
+            --black: #1a1a1a;
+            --white: #ffffff;
+            --border: 5px solid var(--black);
+            --shadow: 10px 10px 0px var(--black);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background-image: radial-gradient(var(--black) 15%, transparent 16%);
+            background-size: 20px 20px;
+            background-color: #f0f0f0;
+            font-family: 'Open Sans', sans-serif;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 40px 20px;
+            position: relative;
+        }
+
+        /* BACK BUTTON - OUTSIDE AND TOP LEFT */
+        .fixed-back-btn {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            background: var(--white);
+            color: var(--black);
+            font-family: 'Bangers', cursive;
+            padding: 10px 20px;
+            border: 3px solid var(--black);
+            box-shadow: 5px 5px 0px var(--black);
+            font-size: 1.2rem;
+            cursor: pointer;
+            z-index: 1000;
+            transition: 0.1s;
+            text-decoration: none;
+        }
+
+        .fixed-back-btn:hover {
+            background: var(--primary);
+            transform: translate(-2px, -2px);
+            box-shadow: 7px 7px 0px var(--black);
+        }
+
+        .fixed-back-btn:active {
+            transform: translate(3px, 3px);
+            box-shadow: 0px 0px 0px var(--black);
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 60px;
+            padding: 30px 60px;
+            background: var(--primary);
+            border: var(--border);
+            box-shadow: var(--shadow);
+            transform: rotate(-1deg);
+        }
+
+        .logo {
+            font-family: 'Bangers', cursive;
+            font-size: clamp(2.5rem, 8vw, 4.5rem);
+            text-transform: uppercase;
+            letter-spacing: 4px;
+            color: var(--white);
+            -webkit-text-stroke: 2px var(--black);
+            text-shadow: 4px 4px 0px var(--accent);
+        }
+
+        .menu-wrapper {
+            display: grid;
+            grid-template-columns: 320px 240px 240px;
+            grid-template-rows: 160px 160px;
+            gap: 30px;
+            perspective: 1000px;
+        }
+
+        .card {
+            position: relative;
+            background: white;
+            border: var(--border);
+            box-shadow: var(--shadow);
+            cursor: pointer;
+            transition: all 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            text-decoration: none; 
+            display: block;        
+            color: inherit;        
+            overflow: visible;
+        }
+
+        .inner {
+            position: absolute;
+            inset: 0;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-end;
+            padding: 20px;
+        }
+
+        .inner::before {
+            content: "";
+            position: absolute;
+            top: -50%; left: -50%; width: 200%; height: 200%;
+            background-image: 
+                linear-gradient(45deg, rgba(255,255,255,0.1) 25%, transparent 25%, transparent 75%, rgba(255,255,255,0.1) 75%);
+            background-size: 30px 30px;
+            animation: patternMove 8s linear infinite;
+        }
+
+        @keyframes patternMove {
+            from { transform: translate(0, 0); }
+            to { transform: translate(30px, 30px); }
+        }
+
+        .char {
+            position: absolute;
+            z-index: 10;
+            filter: drop-shadow(4px 4px 0px var(--black));
+            transition: all 0.3s ease;
+            pointer-events: none;
+        }
+
+        .char img {
+            height: 130px;
+            width: auto;
+            display: block;
+        }
+
+        .c1 { grid-area: 1 / 1 / 2 / 2; transform: rotate(-2deg); }
+        .c2 { grid-area: 2 / 1 / 3 / 2; transform: rotate(1deg); }
+        .c3 { grid-area: 1 / 2 / 3 / 3; transform: rotate(-1deg); }
+        .c4 { grid-area: 1 / 3 / 3 / 4; transform: rotate(2deg); }
+
+        .c1 .char { top: -60px; right: 10px; }
+        .c2 .char { top: -50px; right: 20px; }
+        .c3 .char { top: 15%; left: 50%; transform: translateX(-50%); }
+        .c4 .char { top: 20%; left: 50%; transform: translateX(-50%); }
+
+        .label {
+            position: relative;
+            z-index: 5;
+            color: white;
+            font-family: 'Bangers', cursive;
+            text-shadow: 3px 3px 0px var(--black);
+            letter-spacing: 1px;
+        }
+
+        .title { font-size: 3rem; display: block; line-height: 1; margin-bottom: 5px; }
+        .subtitle { font-size: 1.5rem; display: block; text-transform: uppercase; }
+
+        .card:hover {
+            transform: scale(1.05) translateY(-5px) rotate(0deg) !important;
+            z-index: 50;
+            box-shadow: 15px 15px 0px var(--black);
+        }
+
+        .card:hover .char {
+            transform: scale(1.1) translateY(-10px);
+            filter: drop-shadow(8px 8px 0px var(--black));
+        }
+
+        .card:active {
+            transform: scale(0.98) translateY(5px) !important;
+            box-shadow: 4px 4px 0px var(--black);
+        }
+
+        @media (max-width: 850px) {
+            .menu-wrapper {
+                grid-template-columns: 1fr 1fr;
+                grid-template-rows: auto;
+                margin-top: 40px;
+            }
+            .c1, .c2, .c3, .c4 { grid-area: auto; transform: none; }
+        }
+    </style>
+</head>
+<body>
+
+    <button class="fixed-back-btn" onclick="window.history.back()">← EXIT</button>
+
+    <header>
+        <h1 class="logo">ARCADE HUB</h1>
+    </header>
+
+    <div class="menu-wrapper">
+        <a href="https://yashhh710.github.io/reaction-speed-test/" target="_blank" class="card c1">
+            <div class="char"><img src="https://www.pngall.com/wp-content/uploads/2017/01/Formula-One-PNG-HD.png"></div>
+            <div class="inner" style="background: var(--green);">
+                <div class="label">
+                    <span class="title">🏎️</span>
+                    <span class="subtitle">Speed Test</span>
+                </div>
+            </div>
+        </a>
+
+        <a href="https://yashhh710.github.io/pokedex/" target="_blank" class="card c2">
+            <div class="char"><img src="https://www.pngmart.com/files/23/Pokedex-PNG.png"></div>
+            <div class="inner" style="background: var(--lime);">
+                <div class="label">
+                    <span class="title">🐾</span>
+                    <span class="subtitle">Pokedex</span>
+                </div>
+            </div>
+        </a>
+
+        <a href="https://yashhh710.github.io/gta-6/" target="_blank" class="card c3">
+            <div class="char"><img src="https://www.pngmart.com/files/23/Grand-Theft-Auto-VI-Logo-PNG-HD.png"></div>
+            <div class="inner" style="background: var(--orange);">
+                <div class="label">
+                    <span class="title">🌆</span>
+                    <span class="subtitle">GTA VI</span>
+                </div>
+            </div>
+        </a>
+
+        <a href="https://yashhh710.github.io/tic-tac-toe-html-css/index.html" target="_blank" class="card c4">
+            <div class="char"><img src="https://static.vecteezy.com/system/resources/previews/022/310/928/original/tic-tac-toe-board-game-3d-illustration-png.png"></div>
+            <div class="inner" style="background: var(--blue);">
+                <div class="label">
+                    <span class="title">⭕</span>
+                    <span class="subtitle">Tic Tac Toe</span>
+                </div>
+            </div>
+        </a>
+    </div>
+
+</body>
+</html>
